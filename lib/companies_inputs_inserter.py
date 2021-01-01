@@ -1,7 +1,7 @@
 import simplejson as json
 
-from GIDE.repository import EmpresasValoresInputadosRepository
-from GIDE.lib.postgres_connector import PostgresConnector
+from lib.repository import EmpresasValoresInputadosRepository
+from lib.postgres_connector import PostgresConnector
 
 
 class CompaniesInputsInserter:
