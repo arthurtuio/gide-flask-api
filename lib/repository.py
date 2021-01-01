@@ -1,5 +1,5 @@
 from psycopg2.extras import DictCursor, RealDictCursor
-from GIDE.lib.postgres_connector import PostgresConnector
+from lib.postgres_connector import PostgresConnector
 
 
 class BaseRepository:
@@ -227,14 +227,3 @@ class Repository:
         :return: Vai retornar a query de SELECT com o WHERE pra pegar certinho as tarifas, com
         base na logica usada da planilha
         """
-
-
-if __name__ == '__main__':
-    conn_params = "dbname=postgres user=postgres password=postgres host=localhost"
-    with PostgresConnector(conn_params).get_conn() as pg_conn:  # isso aqui vai pro controller
-        # teste = ValorImpostosRepository(pg_conn).get_taxes('01-01-2014')
-        # print(teste)
-
-        teste2 = EmpresasValoresInputadosRepository(pg_conn).get_all_rows('estagio.empresas_valores_inputados')
-        print(teste2)
-
