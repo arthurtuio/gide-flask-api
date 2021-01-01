@@ -6,9 +6,9 @@ import simplejson as json
 
 from flask import Flask, request, abort
 
-from GIDE.lib.postgres_connector import PostgresConnector
-from GIDE.companies_inputs_inserter import CompaniesInputsInserter
-from GIDE.repository import (
+from lib.postgres_connector import PostgresConnector
+from lib.companies_inputs_inserter import CompaniesInputsInserter
+from lib.repository import (
     EmpresasValoresInputadosRepository,
     ValorTarifasRepository,
     ValorBandeirasRepository,
