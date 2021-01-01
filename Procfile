@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: gunicorn app:app && python gide_flask_api.py
