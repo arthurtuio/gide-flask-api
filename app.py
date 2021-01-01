@@ -44,7 +44,7 @@ def home():
 
 @app.route('/api/v1/get/empresas_inputadas/all', methods=['GET'])
 def api_empresas_inputadas_all():
-    with PostgresConnector(conn_params).get_conn() as pg_conn:
+    with PostgresConnector().connect_using_default_credentials() as pg_conn:
         all_values = EmpresasValoresInputadosRepository(pg_conn).get_all_rows('estagio.empresas_valores_inputados')
 
     return json.dumps(all_values, iterable_as_array=True, default=str)
@@ -52,7 +52,7 @@ def api_empresas_inputadas_all():
 
 @app.route('/api/v1/get/tarifas/all', methods=['GET'])
 def api_tarifas_all():
-    with PostgresConnector(conn_params).get_conn() as pg_conn:
+    with PostgresConnector().connect_using_default_credentials() as pg_conn:
         all_values = ValorTarifasRepository(pg_conn).get_all_rows('estagio.valor_tarifas')
 
     return json.dumps(all_values, iterable_as_array=True, default=str)
@@ -60,7 +60,7 @@ def api_tarifas_all():
 
 @app.route('/api/v1/get/impostos/all', methods=['GET'])
 def api_impostos_all():
-    with PostgresConnector(conn_params).get_conn() as pg_conn:
+    with PostgresConnector().connect_using_default_credentials() as pg_conn:
         all_values = ValorImpostosRepository(pg_conn).get_all_rows('estagio.valor_impostos')
 
     return json.dumps(all_values, iterable_as_array=True, default=str)
@@ -68,7 +68,7 @@ def api_impostos_all():
 
 @app.route('/api/v1/get/bandeiras/all', methods=['GET'])
 def api_bandeiras_all():
-    with PostgresConnector(conn_params).get_conn() as pg_conn:
+    with PostgresConnector().connect_using_default_credentials() as pg_conn:
         all_values = ValorBandeirasRepository(pg_conn).get_all_rows('estagio.valor_bandeiras')
 
     return json.dumps(all_values, iterable_as_array=True, default=str)

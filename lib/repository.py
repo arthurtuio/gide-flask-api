@@ -1,5 +1,4 @@
 from psycopg2.extras import DictCursor, RealDictCursor
-from lib.postgres_connector import PostgresConnector
 
 
 class BaseRepository:
