@@ -12,3 +12,8 @@ TL, DR:
 6. Na EC2, entrar na pasta do repo (```cd tcc-app```), rodar o streamlit, pegar o external url, e dale.
   
 Pra deixar ele aberto sempre ler mais o post.
+
+## Pro RDS ##
+Lançar ele na AWS, sem segredo nisso, único detalhe são as portas!
+- Adicionar uma> {Type: All Traffic, Protocol: Vai automatico, Port Range: Vai automatico, Source: Anywhere}
+Referência: https://medium.com/@rodkey/deploying-a-flask-application-on-aws-a72daba6bb80
