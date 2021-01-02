@@ -6,6 +6,7 @@ import simplejson as json
 
 from flask import Flask, request, abort
 
+from lib.webpage_html_templates import home_template
 from lib.postgres_connector import PostgresConnector
 from lib.companies_inputs_inserter import CompaniesInputsInserter
 from lib.repository import (
@@ -24,22 +25,7 @@ conn_params = "dbname=postgres user=postgres password=postgres host=localhost"
 
 @app.route('/', methods=['GET'])
 def home():
-    return """
-        <h1>API GIDE Autonomus</h1>
-        <p>API que possibilita consultar os registros do banco de dados,
-        e também inserir dados de novas empresas.</p>
-        
-        <h3>Para fazer a consulta, use algum destes endpoints:</h3>
-        <p> 
-        - Tarifas: /api/v1/get/tarifas/all
-        - Impostos: /api/v1/get/impostos/all
-        - Bandeiras: /api/v1/get/bandeiras/all 
-        - Empresas: /api/v1/get/empresas_inputadas/all
-        </p>
-        
-        <h3>Para inserir dados de novas empresas, este:</h3>
-        <p> - /api/v1/insert/empresas_inputadas/ </p>
-    """
+    return home_template()
 
 
 @app.route('/api/v1/get/empresas_inputadas/all', methods=['GET'])
