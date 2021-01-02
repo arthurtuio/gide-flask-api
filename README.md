@@ -1,6 +1,7 @@
 ## Ligando uma EC2:
 
-Referencia: https://towardsdatascience.com/how-to-deploy-a-streamlit-app-using-an-amazon-free-ec2-instance-416a41f69dc3
+Referencia: https://towardsdatascience.com/how-to-deploy-a-streamlit-app-using-an-amazon-free-ec2-instance-416a41f69dc
+Outra ref (to usando mais essa): https://www.twilio.com/blog/deploy-flask-python-app-aws
 
 TL, DR:
 1. Se basear pelo link pra criar a instancia EC2
