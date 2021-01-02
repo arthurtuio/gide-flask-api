@@ -16,7 +16,7 @@ from lib.repository import (
 )
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
+#app.config["DEBUG"] = True
 
 
 conn_params = "dbname=postgres user=postgres password=postgres host=localhost"
@@ -102,4 +102,4 @@ def insert_company():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=8080)
