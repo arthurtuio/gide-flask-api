@@ -28,7 +28,16 @@ class ValorTarifasRepository(BaseRepository):
 
             return cursor.fetchall()
 
-    def get_fares(self, input_params):
+    def get_all_fares_from_an_reference_date(self, reference_date: str, cursor_factory=DictCursor):
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
+            cursor.execute(
+                self._get_fares_using_reference_date_sql_template(),
+                {"reference_date": reference_date}
+            )
+
+            return cursor.fetchall()
+
+    def get_fares(self, input_params, cursor_factory=DictCursor):
         """
         :param input_params: Dicionário com as seguintes chaves:
                 reference_date
@@ -37,7 +46,7 @@ class ValorTarifasRepository(BaseRepository):
                 modalidade
                 subgrupo
         """
-        with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
             cursor.execute(
                 self._get_fares_sql_template(),
                 input_params
@@ -49,6 +58,12 @@ class ValorTarifasRepository(BaseRepository):
     def _get_all_fares_sql_template():
         return """
             SELECT
+                vigencia_inicio,
+                vigencia_fim,
+                fornecedora,
+                posto,
+                modalidade,
+                subgrupo,
                 tusde,
                 te,
                 tu,
@@ -58,9 +73,25 @@ class ValorTarifasRepository(BaseRepository):
                 estagio.valor_tarifas
         """
 
-    def _get_fares_sql_template(self):
+    def _get_fares_using_reference_date_sql_template(self):
         return f"""
             {self._get_all_fares_sql_template()}
+            WHERE
+                vigencia_inicio::date <= %(reference_date)s::date
+                AND vigencia_fim::date > %(reference_date)s::date
+        """
+
+    @staticmethod
+    def _get_fares_sql_template():
+        return f"""
+            SELECT
+                tusde,
+                te,
+                tu,
+                td,
+                td_exc_reat
+            FROM
+                estagio.valor_tarifas
             WHERE
                 vigencia_inicio::date <= %(reference_date)s::date
                 AND vigencia_fim::date > %(reference_date)s::date
@@ -83,8 +114,8 @@ class ValorBandeirasRepository(BaseRepository):
 
             return cursor.fetchall()
 
-    def get_flag_type_and_value(self, reference_date: str):
-        with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
+    def get_flag_type_and_value(self, reference_date: str, cursor_factory=DictCursor):
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
             cursor.execute(
                 self._get_flag_sql_template(),
                 {"reference_date": reference_date}
@@ -122,8 +153,8 @@ class ValorImpostosRepository(BaseRepository):
 
             return cursor.fetchall()
 
-    def get_taxes(self, reference_date: str):
-        with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
+    def get_taxes(self, reference_date: str, cursor_factory=DictCursor):
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
             cursor.execute(
                 self._get_taxes_sql_template(),
                 {"reference_date": reference_date}

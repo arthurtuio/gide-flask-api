@@ -41,6 +41,43 @@ def api_tarifas_all():
     return json.dumps(all_values, iterable_as_array=True, default=str)
 
 
+@app.route('/api/v1/get/tarifas', methods=['GET'])
+def api_tarifas_filtered_by_date():
+    if "data_referencia" not in request.args:
+        return "Erro: Campo 'data_referencia' não foi enviado no request!!"
+
+    params_list = [
+        "fornecedora",
+        "posto",
+        "modalidade",
+        "subgrupo"
+    ]
+
+    with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
+        if all(param in request.args for param in params_list):
+            # Se todos os params de params_list estão tbm em request.args
+            params = {
+                "reference_date": request.args["data_referencia"],
+                "fornecedora": request.args["fornecedora"],
+                "posto": request.args["posto"],
+                "modalidade": request.args["modalidade"],
+                "subgrupo": request.args["subgrupo"],
+            }
+
+            all_values = ValorTarifasRepository(pg_conn).get_fares(
+                cursor_factory=RealDictCursor,
+                input_params=params
+            )
+
+        else:
+            all_values = ValorTarifasRepository(pg_conn).get_all_fares_from_an_reference_date(
+                cursor_factory=RealDictCursor,
+                reference_date=request.args["data_referencia"]
+            )
+
+        return json.dumps(all_values, iterable_as_array=True, default=str)
+
+
 @app.route('/api/v1/get/impostos/all', methods=['GET'])
 def api_impostos_all():
     with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
@@ -49,10 +86,38 @@ def api_impostos_all():
     return json.dumps(all_values, iterable_as_array=True, default=str)
 
 
+@app.route('/api/v1/get/impostos', methods=['GET'])
+def api_impostos_filtered_by_date():
+    if "data_referencia" not in request.args:
+        return "Erro: Campo 'data_referencia' não foi enviado no request!!"
+
+    with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
+        all_values = ValorImpostosRepository(pg_conn).get_taxes(
+            cursor_factory=RealDictCursor,
+            reference_date=request.args["data_referencia"]
+        )
+
+    return json.dumps(all_values, iterable_as_array=True, default=str)
+
+
 @app.route('/api/v1/get/bandeiras/all', methods=['GET'])
 def api_bandeiras_all():
     with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
         all_values = ValorBandeirasRepository(pg_conn).get_all_flags(cursor_factory=RealDictCursor)
+
+    return json.dumps(all_values, iterable_as_array=True, default=str)
+
+
+@app.route('/api/v1/get/bandeiras', methods=['GET'])
+def api_bandeiras_filtered_by_date():
+    if "data_referencia" not in request.args:
+        return "Erro: Campo 'data_referencia' não foi enviado no request!!"
+
+    with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
+        all_values = ValorBandeirasRepository(pg_conn).get_flag_type_and_value(
+            cursor_factory=RealDictCursor,
+            reference_date=request.args["data_referencia"]
+        )
 
     return json.dumps(all_values, iterable_as_array=True, default=str)
 
