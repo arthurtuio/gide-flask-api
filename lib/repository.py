@@ -194,6 +194,15 @@ class EmpresasValoresInputadosRepository(BaseRepository):
 
             return cursor.fetchall()
 
+    def get_all_companies_from_an_reference_date(self, reference_date: str, cursor_factory=DictCursor):
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
+            cursor.execute(
+                self._get_companies_using_reference_date_sql_template(),
+                {"reference_date": reference_date}
+            )
+
+            return cursor.fetchall()
+
     def insert_inputted_data(self, payload):
         with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
             cursor.executemany(
@@ -227,6 +236,13 @@ class EmpresasValoresInputadosRepository(BaseRepository):
                 demanda_medida_fora_ponta
             FROM
                 estagio.empresas_valores_inputados
+        """
+
+    def _get_companies_using_reference_date_sql_template(self):
+        return f"""
+            {self._get_all_companies_sql_template()}
+            WHERE
+                 data_referencia = %(reference_date)s
         """
 
     @staticmethod

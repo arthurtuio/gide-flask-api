@@ -25,14 +25,6 @@ def home():
     return home_template()
 
 
-@app.route('/api/v1/get/empresas_inputadas/all', methods=['GET'])
-def api_empresas_inputadas_all():
-    with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
-        all_values = EmpresasValoresInputadosRepository(pg_conn).get_all_companies(cursor_factory=RealDictCursor)
-
-    return json.dumps(all_values, iterable_as_array=True, default=str)
-
-
 @app.route('/api/v1/get/tarifas/all', methods=['GET'])
 def api_tarifas_all():
     with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
@@ -115,6 +107,28 @@ def api_bandeiras_filtered_by_date():
 
     with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
         all_values = ValorBandeirasRepository(pg_conn).get_flag_type_and_value(
+            cursor_factory=RealDictCursor,
+            reference_date=request.args["data_referencia"]
+        )
+
+    return json.dumps(all_values, iterable_as_array=True, default=str)
+
+
+@app.route('/api/v1/get/empresas_inputadas/all', methods=['GET'])
+def api_empresas_inputadas_all():
+    with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
+        all_values = EmpresasValoresInputadosRepository(pg_conn).get_all_companies(cursor_factory=RealDictCursor)
+
+    return json.dumps(all_values, iterable_as_array=True, default=str)
+
+
+@app.route('/api/v1/get/empresas_inputadas', methods=['GET'])
+def api_empresas_inputadas_filtered_by_date():
+    if "data_referencia" not in request.args:
+        return "Erro: Campo 'data_referencia' não foi enviado no request!!"
+
+    with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
+        all_values = EmpresasValoresInputadosRepository(pg_conn).get_all_companies_from_an_reference_date(
             cursor_factory=RealDictCursor,
             reference_date=request.args["data_referencia"]
         )
