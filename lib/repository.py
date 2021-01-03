@@ -20,6 +20,14 @@ class ValorTarifasRepository(BaseRepository):
     def __init__(self, pg_conn):
         super(ValorTarifasRepository, self).__init__(pg_conn)
 
+    def get_all_fares(self):
+        with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute(
+                self._get_all_fares_sql_template()
+            )
+
+            return cursor.fetchall()
+
     def get_fares(self, input_params):
         """
         :param input_params: Dicionário com as seguintes chaves:
@@ -38,7 +46,7 @@ class ValorTarifasRepository(BaseRepository):
             return cursor.fetchall()
 
     @staticmethod
-    def _get_fares_sql_template():
+    def _get_all_fares_sql_template():
         return """
             SELECT
                 tusde,
@@ -48,6 +56,11 @@ class ValorTarifasRepository(BaseRepository):
                 td_exc_reat
             FROM
                 estagio.valor_tarifas
+        """
+
+    def _get_fares_sql_template(self):
+        return f"""
+            {self._get_all_fares_sql_template()}
             WHERE
                 vigencia_inicio::date <= %(reference_date)s::date
                 AND vigencia_fim::date > %(reference_date)s::date
@@ -62,6 +75,14 @@ class ValorBandeirasRepository(BaseRepository):
     def __init__(self, pg_conn):
         super(ValorBandeirasRepository, self).__init__(pg_conn)
 
+    def get_all_flags(self):
+        with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute(
+                self._get_all_flags_sql_template()
+            )
+
+            return cursor.fetchall()
+
     def get_flag_type_and_value(self, reference_date: str):
         with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
             cursor.execute(
@@ -72,13 +93,18 @@ class ValorBandeirasRepository(BaseRepository):
             return cursor.fetchall()
 
     @staticmethod
-    def _get_flag_sql_template():
+    def _get_all_flags_sql_template():
         return """
             SELECT
                 bandeira,
                 rs_por_kw
             FROM
                 estagio.valor_bandeiras
+        """
+
+    def _get_flag_sql_template(self):
+        return f"""
+            {self._get_all_flags_sql_template()}
             WHERE
                  data_referencia = %(reference_date)s
         """
@@ -87,6 +113,14 @@ class ValorBandeirasRepository(BaseRepository):
 class ValorImpostosRepository(BaseRepository):
     def __init__(self, pg_conn):
         super(ValorImpostosRepository, self).__init__(pg_conn)
+
+    def get_all_taxes(self):
+        with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
+            cursor.execute(
+                self._get_all_taxes_sql_template()
+            )
+
+            return cursor.fetchall()
 
     def get_taxes(self, reference_date: str):
         with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
@@ -98,7 +132,7 @@ class ValorImpostosRepository(BaseRepository):
             return cursor.fetchall()
 
     @staticmethod
-    def _get_taxes_sql_template():
+    def _get_all_taxes_sql_template():
         return """
             SELECT
                 icms,
@@ -107,6 +141,11 @@ class ValorImpostosRepository(BaseRepository):
                 cofins
             FROM
                 estagio.valor_impostos
+        """
+
+    def _get_taxes_sql_template(self):
+        return f"""
+            {self._get_all_taxes_sql_template()}
             WHERE
                  data_referencia = %(reference_date)s
         """
