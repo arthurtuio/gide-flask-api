@@ -20,8 +20,8 @@ class ValorTarifasRepository(BaseRepository):
     def __init__(self, pg_conn):
         super(ValorTarifasRepository, self).__init__(pg_conn)
 
-    def get_all_fares(self):
-        with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
+    def get_all_fares(self, cursor_factory=DictCursor):
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
             cursor.execute(
                 self._get_all_fares_sql_template()
             )
@@ -75,8 +75,8 @@ class ValorBandeirasRepository(BaseRepository):
     def __init__(self, pg_conn):
         super(ValorBandeirasRepository, self).__init__(pg_conn)
 
-    def get_all_flags(self):
-        with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
+    def get_all_flags(self, cursor_factory=DictCursor):
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
             cursor.execute(
                 self._get_all_flags_sql_template()
             )
@@ -114,8 +114,8 @@ class ValorImpostosRepository(BaseRepository):
     def __init__(self, pg_conn):
         super(ValorImpostosRepository, self).__init__(pg_conn)
 
-    def get_all_taxes(self):
-        with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
+    def get_all_taxes(self, cursor_factory=DictCursor):
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
             cursor.execute(
                 self._get_all_taxes_sql_template()
             )
@@ -155,12 +155,48 @@ class EmpresasValoresInputadosRepository(BaseRepository):
     def __init__(self, pg_conn):
         super(EmpresasValoresInputadosRepository, self).__init__(pg_conn)
 
+    def get_all_companies(self, cursor_factory=DictCursor):
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
+            cursor.execute(
+                self._get_all_companies_sql_template()
+            )
+
+            return cursor.fetchall()
+
     def insert_inputted_data(self, payload):
         with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
             cursor.executemany(
                 self._get_insert_sql_template(),
                 payload
             )
+
+    @staticmethod
+    def _get_all_companies_sql_template():
+        return """
+            SELECT
+                data_referencia,
+                fornecedora,
+                unidade_consumidora,
+                nome_cliente,
+                modalidade,
+                subgrupo,
+                demanda_contratada_ponta,
+                is_teste_ponta,
+                demanda_contratada_fora_ponta,
+                is_teste_fora_ponta,
+                consumo_ponta,
+                consumo_fora_ponta,
+                geracao_ener_ponta,
+                geracao_ener_fora_ponta,
+                ener_reat_exced_ponta,
+                ener_reat_exced_fora_ponta,
+                demanda_reat_exced_ponta,
+                demanda_reat_exced_fora_ponta,
+                demanda_medida_ponta,
+                demanda_medida_fora_ponta
+            FROM
+                estagio.empresas_valores_inputados
+        """
 
     @staticmethod
     def _get_insert_sql_template():

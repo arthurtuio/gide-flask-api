@@ -5,6 +5,7 @@
 import simplejson as json
 
 from flask import Flask, request, abort
+from psycopg2.extras import RealDictCursor
 
 from lib.webpage_html_templates import home_template
 from lib.postgres_connector import PostgresConnector
@@ -27,7 +28,7 @@ def home():
 @app.route('/api/v1/get/empresas_inputadas/all', methods=['GET'])
 def api_empresas_inputadas_all():
     with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
-        all_values = EmpresasValoresInputadosRepository(pg_conn).get_all_rows('estagio.empresas_valores_inputados')
+        all_values = EmpresasValoresInputadosRepository(pg_conn).get_all_companies(cursor_factory=RealDictCursor)
 
     return json.dumps(all_values, iterable_as_array=True, default=str)
 
@@ -35,7 +36,7 @@ def api_empresas_inputadas_all():
 @app.route('/api/v1/get/tarifas/all', methods=['GET'])
 def api_tarifas_all():
     with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
-        all_values = ValorTarifasRepository(pg_conn).get_all_rows('estagio.valor_tarifas')
+        all_values = ValorTarifasRepository(pg_conn).get_all_fares(cursor_factory=RealDictCursor)
 
     return json.dumps(all_values, iterable_as_array=True, default=str)
 
@@ -43,7 +44,7 @@ def api_tarifas_all():
 @app.route('/api/v1/get/impostos/all', methods=['GET'])
 def api_impostos_all():
     with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
-        all_values = ValorImpostosRepository(pg_conn).get_all_rows('estagio.valor_impostos')
+        all_values = ValorImpostosRepository(pg_conn).get_all_taxes(cursor_factory=RealDictCursor)
 
     return json.dumps(all_values, iterable_as_array=True, default=str)
 
@@ -51,7 +52,7 @@ def api_impostos_all():
 @app.route('/api/v1/get/bandeiras/all', methods=['GET'])
 def api_bandeiras_all():
     with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
-        all_values = ValorBandeirasRepository(pg_conn).get_all_rows('estagio.valor_bandeiras')
+        all_values = ValorBandeirasRepository(pg_conn).get_all_flags(cursor_factory=RealDictCursor)
 
     return json.dumps(all_values, iterable_as_array=True, default=str)
 
