@@ -14,9 +14,6 @@ class CompaniesInputsInserter:
     Ambos os métodos depois chamam o método _insert_payload_on_db, que trata
     os dados (não o formato), e insere no banco de dados
     """
-
-    CONN_PARAMS = "dbname=postgres user=postgres password=postgres host=localhost"
-
     def __init__(self):
         """
         :param payload_to_insert: Lista de dicionários
@@ -35,7 +32,7 @@ class CompaniesInputsInserter:
     def _insert_payload_on_db(self, formatted_payload):
         list_to_insert = []
 
-        with PostgresConnector(self.CONN_PARAMS).get_conn() as pg_conn:
+        with PostgresConnector().connect_using_localhost_credentials() as pg_conn:
             for row in formatted_payload:
                 parsed_keys = self._parse_payload_keys(row)
                 row.update(parsed_keys)
