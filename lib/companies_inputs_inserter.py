@@ -32,7 +32,7 @@ class CompaniesInputsInserter:
     def _insert_payload_on_db(self, formatted_payload):
         list_to_insert = []
 
-        with PostgresConnector().gide_db_credentials() as pg_conn:
+        with PostgresConnector().connect_using_default_credentials() as pg_conn:
             for row in formatted_payload:
                 parsed_keys = self._parse_payload_keys(row)
                 row.update(parsed_keys)
