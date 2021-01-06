@@ -3,9 +3,9 @@
 Este repo contém o código necessário para a criação da API da GIDE, usando a biblioteca Flask, de Python.
 
 ## Arquivos que você vai encontrar nesse repo ##
-- app.py: Código principal do repositório. É nele que foi criado todos os endereços web da API;
-- Procfile: Arquivo necessário para que esse repo rode no Heroku (servidor web);
-- requirements.txt: Arquivo contendo as bibliotecas usadas neste repositório
+- `app.py`: Código principal do repositório. É nele que foi criado todos os endereços web da API;
+- `Procfile`: Arquivo necessário para que esse repo rode no Heroku (servidor web);
+- `requirements.txt`: Arquivo contendo as bibliotecas usadas neste repositório
 - pasta lib: Contém diversos códigos auxiliares para o uso da API, de forma que deixando eles lá, o código principal
   (app.py) fica bem abstrato, e mais fácil de ser entendido.
   
