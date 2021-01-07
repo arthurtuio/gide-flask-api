@@ -26,10 +26,33 @@ CREATE TABLE estagio.empresas_valores_inputados (
 
 CREATE TABLE estagio.empresas_valores_calculados (
 	id bigserial NOT NULL,
-    -- o restante ta no drive
+	inputed_data_id INT NOT NULL,
+	demanda_max_p NUMERIC NOT NULL,
+	demanda_min_p NUMERIC NOT NULL,
+	demanda_max_fp NUMERIC NOT NULL,
+	demanda_min_fp NUMERIC NOT NULL,
+	sobras_p_kw NUMERIC NOT NULL default 0,
+	sobras_fp_kw NUMERIC NOT NULL default 0,
+	ultrapassagem_p_kw NUMERIC NOT NULL default 0,
+	ultrapassagem_fp_kw NUMERIC NOT NULL default 0,
+	sobras_p_reais NUMERIC NOT NULL default 0,
+	sobras_fp_reais NUMERIC NOT NULL default 0,
+	ultrapassagem_ponta_reais NUMERIC NOT NULL default 0,
+	ultrapassagem_fponta_reais NUMERIC NOT NULL default 0,
+	TUSD_Energia_P_reais NUMERIC NOT NULL,
+	Energia_cativo_P_reais NUMERIC NOT NULL,
+	TUSD_Energia_FP_reais NUMERIC NOT NULL,
+	Energia_cativo_FP_reais NUMERIC NOT NULL,
+	Energia_reat_exc_P_reais NUMERIC NOT NULL,
+	Energia_reat_exc_FP_reais NUMERIC NOT NULL,
+	TUSD_fio_P_reais NUMERIC NOT NULL,
+	TUSD_fio_FP_reais NUMERIC NOT NULL,
+	-- demanda_reat_exc_reais,
+	adicional_band_reais NUMERIC NOT NULL,
+	-- reembolso_geracao_reais,
+	-- extras_reais,
+	fatura_reais numeric NOT NULL
 )
-
-
 
 CREATE TABLE estagio.valor_tarifas (
 	id bigserial NOT NULL,
