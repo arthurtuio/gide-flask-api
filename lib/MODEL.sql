@@ -24,6 +24,13 @@ CREATE TABLE estagio.empresas_valores_inputados (
 	updated_at timestamptz NOT NULL DEFAULT now()
 )
 
+CREATE TABLE estagio.empresas_valores_calculados (
+	id bigserial NOT NULL,
+    -- o restante ta no drive
+)
+
+
+
 CREATE TABLE estagio.valor_tarifas (
 	id bigserial NOT NULL,
 	vigencia_inicio text NOT NULL,
