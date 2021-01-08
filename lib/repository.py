@@ -1,4 +1,5 @@
 from psycopg2.extras import DictCursor, RealDictCursor
+from lib.postgres_connector import PostgresConnector
 
 
 class BaseRepository:
@@ -224,7 +225,7 @@ class EmpresasValoresInputadosRepository(BaseRepository):
                 payload
             )
 
-            return cursor.fetchall()
+            return cursor.fetchone()
 
     def insert_inputted_data(self, payload):
         with self._pg_conn.cursor(cursor_factory=DictCursor) as cursor:
@@ -260,11 +261,7 @@ class EmpresasValoresInputadosRepository(BaseRepository):
                 {"reference_date": reference_date, "company_name": company_name}
             )
 
-            return cursor.fetchall()
-
-    def get_current_demanda_contratada(
-            self
-    ):
+            return cursor.fetchone()
 
     @staticmethod
     def _get_all_companies_sql_template():
@@ -444,3 +441,15 @@ class Repository:
         :return: Vai retornar a query de SELECT com o WHERE pra pegar certinho as tarifas, com
         base na logica usada da planilha
         """
+
+
+if __name__ == '__main__':
+    db_connection = PostgresConnector().connect_using_localhost_credentials()
+
+    with db_connection as pg_conn:
+        all_values = EmpresasValoresInputadosRepository(pg_conn).get_latest_register_with_changes_on_demanda_contratada(
+            tipo_dem_contratada="Ponta",
+            reference_date="01-05-2014",
+            company_name="%(nome_cliente)s"
+        )
+        print(all_values["demanda_contratada_ponta"])
