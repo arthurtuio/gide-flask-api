@@ -204,7 +204,7 @@ class EmpresasValoresInputadosRepository(BaseRepository):
             return cursor.fetchall()
 
     def get_data_using_company_and_reference_date(
-            self, reference_date: str, company_name: str = None, company_uc: str = None, cursor_factory=DictCursor
+            self, reference_date: str, company_name: str, company_uc: str = None, cursor_factory=DictCursor
     ):
         # if company_name:
         payload = {
@@ -232,6 +232,39 @@ class EmpresasValoresInputadosRepository(BaseRepository):
                 self._get_insert_sql_template(),
                 payload
             )
+
+    def get_latest_register_with_changes_on_demanda_contratada(
+            self, tipo_dem_contratada, reference_date: str, company_name: str, cursor_factory=DictCursor,
+        ):
+        """
+        Busca o ultimo registro que teve alteração na demanda contratada.
+        Detalhe que esse método só é chamado pelo controller.py,
+        em caso do mês que se quer calcular SER período de testes
+        (na ponta ou fora ponta, tanto faz isso)
+        Ref: https://stackoverflow.com/questions/6560000/sql-selecting-rows-where-column-value-changed-from-previous-row
+        """
+        if tipo_dem_contratada == "Ponta":
+            tipo_demanda_contratada="demanda_contratada_ponta"
+            tipo_teste="is_teste_ponta"
+
+        else:
+            tipo_demanda_contratada="demanda_contratada_fora_ponta"
+            tipo_teste="is_teste_fora_ponta"
+
+        with self._pg_conn.cursor(cursor_factory=cursor_factory) as cursor:
+            cursor.execute(
+                self._get_latest_register_with_changes_dem_contr_sql_template(
+                    tipo_demanda_contratada=tipo_demanda_contratada,
+                    tipo_teste=tipo_teste
+                ),
+                {"reference_date": reference_date, "company_name": company_name}
+            )
+
+            return cursor.fetchall()
+
+    def get_current_demanda_contratada(
+            self
+    ):
 
     @staticmethod
     def _get_all_companies_sql_template():
@@ -326,6 +359,38 @@ class EmpresasValoresInputadosRepository(BaseRepository):
                 %(demanda_medida_fora_ponta)s
             )
             -- ON CONFLICT ON CONSTRAINT blip_normalized_messages_message_id_key DO NOTHING
+        """
+
+    @staticmethod
+    def _get_latest_register_with_changes_dem_contr_sql_template(
+            tipo_demanda_contratada, tipo_teste
+    ):
+        return f"""
+            SELECT a1.{tipo_demanda_contratada}
+            FROM (
+                SELECT 
+                    {tipo_teste}, 
+                    {tipo_demanda_contratada}, 
+                    data_referencia,
+                    nome_cliente
+                FROM estagio.empresas_valores_inputados
+                ) a1 
+            JOIN (
+                SELECT 
+                    {tipo_teste}, 
+                    {tipo_demanda_contratada},
+                    data_referencia,
+                    nome_cliente
+                FROM estagio.empresas_valores_inputados
+                ) a2 
+                ON a1.nome_cliente = a2.nome_cliente
+                where a1.is_teste_ponta 
+                AND a1.data_referencia::DATE = a2.data_referencia::date + INTERVAL '1 month'
+                AND a1.demanda_contratada_ponta != a2.demanda_contratada_ponta
+                AND a1.data_referencia::DATE < %(reference_date)s
+                AND a1.nome_cliente = %(company_name)s
+            ORDER BY a1.data_referencia DESC 
+            LIMIT 1
         """
 
 class Repository:

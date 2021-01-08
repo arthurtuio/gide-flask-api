@@ -8,10 +8,15 @@ from lib.repository import (
 
 
 class Controller:
-    """
-    Classe que realiza todos os cálculos para as colunas da tabela empresas_valores_calculados.
-    """
     def __init__(self, company_name, reference_date):
+        """
+    Classe que realiza todos os cálculos para as colunas da tabela empresas_valores_calculados.
+    É chamada sempre passando na entrada os dados de uma empresa, em um mês, ou seja, quase
+    uma linha do banco.
+
+    Com esses dados ela busca os demais dados da empresa no banco, e usa eles pra realizar
+    os calculos necessários.
+    """
         self.company_name = company_name
         self.reference_date = reference_date
 
@@ -68,6 +73,63 @@ class Controller:
     #         "ultrapassagem_p_kw": ultrapassagem_p_kw,
     #         "ultrapassagem_fp_kw": ultrapassagem_fp_kw,
     #     }
+
+    def _calculate_demanda_max_e_min(self, company_month_data, empresas_repository):
+        """
+        - Demanda mínima:
+        Ex:
+        [Mês | dem contratada | periodo teste? | Dem mín | Justificativa                                     ]
+        [1   |             30 | FALSE          |      30 | É a mesma da contratada, pq não é período de teste]
+        [2   |             75 | TRUE           |      30 | É a do último mês antes de ser teste              ]
+        [3   |             75 | TRUE           |      30 | Como a do mês 2 é igual a desse mês, a demanda min ainda é a do mês anterior ao teste]
+        [4   |             90 | TRUE           |      75 | Como a do mês 3 é DIFERENTE a desse mês, a demanda min passa a ser do mês anterior]
+
+        Ou seja:
+        - if periodo de testes:
+            -> demanda minima é igual a demanda contratada do ultimo mês com troca
+        - else = demanda contratada
+
+        - Demanda MÁXIMA FP:
+            - Se não for período de teste, é = demanda contratada*1,05
+            - Se for, é a demanda contratada atual*1,05 + 0,3*(diferença entre demanda contratada ATUAL e a ANTERIOR/ref)
+        """
+        is_teste_p = company_month_data["is_teste_ponta"]
+        is_teste_fp = company_month_data["is_teste_fora_ponta"]
+
+        # Demanda Fora Ponta #
+        if not is_teste_fp:
+            demanda_min_fp = company_month_data["demanda_contratada_fora_ponta"]
+            demanda_max_fp = demanda_min_fp*1.05
+
+        else:
+            demanda_contratada_ref = empresas_repository.get_latest_register_with_changes_on_demanda_contratada(
+                tipo_dem_contratada="Fora Ponta"
+            )
+            demanda_contratada_atual = company_month_data["demanda_contratada_fora_ponta"]
+
+            demanda_min_fp = demanda_contratada_ref["demanda_contratada_fora_ponta"]
+            demanda_max_fp = (demanda_contratada_atual * 1.05) + (demanda_contratada_atual - demanda_contratada_ref)*0.3
+
+        # Demanda Ponta #
+        if not is_teste_p:
+            demanda_min_p = company_month_data["demanda_contratada_ponta"]
+            demanda_max_fp = demanda_min_p * 1.05
+
+        else:
+            demanda_contratada_ref = empresas_repository.get_latest_register_with_changes_on_demanda_contratada(
+                tipo_dem_contratada="Ponta"
+            )
+            demanda_contratada_atual = company_month_data["demanda_contratada_ponta"]
+
+            demanda_min_p = demanda_contratada_ref["demanda_contratada_ponta"]
+            demanda_max_p = (demanda_contratada_atual * 1.05) + (demanda_contratada_atual - demanda_contratada_ref)*0.3
+
+        return {
+            "demanda_min_fp": demanda_min_fp,
+            "demanda_max_fp": demanda_max_fp,
+            "demanda_min_p": demanda_min_p,
+            "demanda_max_p": demanda_max_p,
+        }
 
     def _calculate_tusd_energia_reais(
             self, company_month_data, company_params, tarifas_repository
