@@ -209,7 +209,6 @@ class Controller:
             "ener_reat_exc_fp_reais": ener_reat_exc_fp_reais
         }
 
-
     def _get_company_month_data(self, empresas_repository):
         return empresas_repository.get_data_using_company_and_reference_date(
             reference_date=self.reference_date, company_name=self.company_name

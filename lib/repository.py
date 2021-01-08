@@ -447,9 +447,16 @@ if __name__ == '__main__':
     db_connection = PostgresConnector().connect_using_localhost_credentials()
 
     with db_connection as pg_conn:
-        all_values = EmpresasValoresInputadosRepository(pg_conn).get_latest_register_with_changes_on_demanda_contratada(
+        latest_demanda_contratada = EmpresasValoresInputadosRepository(pg_conn).get_latest_register_with_changes_on_demanda_contratada(
             tipo_dem_contratada="Ponta",
             reference_date="01-05-2014",
             company_name="%(nome_cliente)s"
         )
-        print(all_values["demanda_contratada_ponta"])
+        print(latest_demanda_contratada["demanda_contratada_ponta"])
+
+        company_month_info = EmpresasValoresInputadosRepository(pg_conn).get_data_using_company_and_reference_date(
+            reference_date="01-05-2014",
+            company_name="%(nome_cliente)s"
+        )
+
+        print(company_month_info)

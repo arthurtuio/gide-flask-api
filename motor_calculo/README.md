@@ -19,7 +19,7 @@ e inserido no banco de dados, em uma tabela com estas colunas.
 - Criar também a opção de calcular todos os registros de determinada empresa, passando
 apenas o nome dela ou a UC, sem passar a data referência. - Isso MUUUITO PRA FRENTE
   
-1. Adicionar as regras pra calcular demanda max e min, p e fp.
-2. Adicionar as regras pra calcular TUSD FIO reais p e fp
-3. Adicionar as regras pra calcular Ultrapassagem reais Ponta e Fp
+1. Adicionar as regras pra calcular demanda max e min, p e fp. -> Deu boa carajo!!
+2. Adicionar as regras pra calcular TUSD FIO reais p e fp -> Proximo passo, ja tenho os valores, so brincar
+3. Adicionar as regras pra calcular Ultrapassagem reais Ponta e Fp -> Proximo passo, ja tenho os valores, so brincar
 4. Msm coisa pra adicional de bandeira
