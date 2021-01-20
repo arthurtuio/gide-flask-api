@@ -3,4 +3,5 @@ psycopg2-binary==2.8.6 #Instalar apenas na EC2
 Flask==1.1.2
 gunicorn==20.0.4
 simplejson==3.17.2
+numpy
 
