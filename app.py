@@ -17,6 +17,10 @@ from lib.repository import (
     ValorImpostosRepository
 )
 
+from lib.webpage_html_templates import simulation_home_template
+from lib.simulacoes.machines_simulations import motor_1, motor_2
+
+
 app = Flask(__name__)
 
 
@@ -164,6 +168,24 @@ def insert_company():
         {type(json.loads(json.dumps(payload)))}
         {json.dumps(payload)}
     """
+
+#######################################################
+####### Daqui pra baixo é a parte de simulações #######
+
+
+@app.route('/simulation', methods=['GET'])
+def simulation_home():
+    return simulation_home_template()
+
+
+@app.route('/simulation/api/v1/get/motor1', methods=['GET'])
+def motor1_get_data():
+    return json.dumps(motor_1(), iterable_as_array=True, default=str)
+
+
+@app.route('/simulation/api/v1/get/motor2', methods=['GET'])
+def motor2_get_data():
+    return json.dumps(motor_2(), iterable_as_array=True, default=str)
 
 
 if __name__ == '__main__':

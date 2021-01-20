@@ -53,7 +53,7 @@ class ValorTarifasRepository(BaseRepository):
                 input_params
             )
 
-            return cursor.fetchall()
+            return cursor.fetchone()
 
     @staticmethod
     def _get_all_fares_sql_template():

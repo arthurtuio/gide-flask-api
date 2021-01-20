@@ -32,6 +32,9 @@ class Controller:
             company_month_data = self._get_company_month_data(empresas_repository)
             company_params = self._get_company_params(company_month_data)
 
+            print(f"company_month_data: {company_month_data}")
+            print(f"company_params: {company_params}")
+
             # Calculos daqui pra baixo #
             tusde_p_and_fp_reais = self._calculate_tusd_energia_reais(
                 company_month_data, company_params, tarifas_repository
@@ -40,6 +43,7 @@ class Controller:
             energia_cativo_p_and_fp_reais = self._calculate_energia_cativo_reais(
                 company_month_data, company_params, tarifas_repository
             )
+
 
     # def _calculate_sobras_and_ultrapassagem_reais(self, empresas_repository):
     #     self._calculate_sobras_and_ultrapassagem_kw(empresas_repository)
@@ -217,14 +221,30 @@ class Controller:
     @staticmethod
     def _get_company_params(company_month_data):
         return {
-            "data_referencia": company_month_data["data_referencia"],
+            "reference_date": company_month_data["data_referencia"],
             "fornecedora": company_month_data["fornecedora"],
             "modalidade": company_month_data["modalidade"],
             "subgrupo": company_month_data["subgrupo"],
-        }
+        } if company_month_data else "NÃO HÁ DADOS DESSA EMPRESA, FAÇA UM NOVO REQUEST!"
 
     @staticmethod
     def _get_fares_month_data(tarifas_repository, company_params, posto):
-        return tarifas_repository.get_fares(
-            input_params=company_params.update({"posto": posto})
+        company_params.update({"posto": posto})
+
+        print(" ")
+        print("Tarifas repository::")
+        print(tarifas_repository.get_fares(
+            input_params=company_params
         )
+)
+
+        return tarifas_repository.get_fares(
+            input_params=company_params
+        )
+
+
+if __name__ == '__main__':
+    Controller(
+        company_name="Teste",
+        reference_date="01-01-2020"
+    ).execute()
